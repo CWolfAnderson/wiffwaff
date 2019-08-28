@@ -273,14 +273,17 @@ textarea {
 }
 
 .blue-team {
-	color: blue;
-}
-
-.score {
-	font-size: 40vw;
+	color: #0EB9CB;
 }
 
 .red-team {
-	color: red;
+	color: #EC1B23;
 }
 
+.score {
+	font-size: 33vw;
+}
+
+.team {
+  text-align: center;
+}
