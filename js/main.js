@@ -8,7 +8,7 @@ const bodyElem = document.querySelector('body');
 const blueScoreElem = document.getElementById('blue-score');
 const redScoreElem = document.getElementById('red-score');
 
-const history = []; // will look like this: ['red', 'red', 'blue',...] based on who got the point
+let history = []; // will look like this: ['red', 'red', 'blue',...] based on who got the point
 
 const checkForWinner = (blueScore, redScore) => {
   // you have to win by 2
@@ -16,12 +16,12 @@ const checkForWinner = (blueScore, redScore) => {
     && (blueScore >= 11
     || redScore >= 11)) {
     if (blueScore > redScore) {
-      bodyElem.style.backgroundColor = 'black';
+      bodyElem.style.backgroundColor = '#818181';
       isWinner = true;
       redScoreElem.style.textDecoration = 'none';
       blueScoreElem.style.textDecoration = 'none';
     } else {
-      bodyElem.style.backgroundColor = 'black';
+      bodyElem.style.backgroundColor = '#818181';
       isWinner = true;
       redScoreElem.style.textDecoration = 'none';
       blueScoreElem.style.textDecoration = 'none';
@@ -63,7 +63,7 @@ const checkWhoIsServing = (blueScore, redScore) => {
 }
 
 document.addEventListener('keyup', (e) => {
-  console.log('e', e);
+  // console.log('e', e);
 
   if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { // blue team point
     if (!teamServing) {
@@ -99,6 +99,7 @@ document.addEventListener('keyup', (e) => {
     bodyElem.style.backgroundColor = 'white';
     isWinner = false;
     history = [];
+    teamServing = undefined;
   } else if (e.key === 'u') {
     if (history.length > 0) {
       const userToRemovePointFrom = history.pop();
