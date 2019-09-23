@@ -3,17 +3,17 @@ import Select from 'react-select';
 import './Scoreboard.scss';
 import Score from '../Score';
 
-const players = [
-    { value: 'Christoph', label: 'Christoph' },
-    { value: 'Danny', label: 'Danny' },
-    { value: 'Edgar', label: 'Edgar' },
-    { value: 'Fadi', label: 'Fadi' },
-    { value: 'Kathy', label: 'Kathy' },
-    { value: 'Nelson', label: 'Nelson' },
-    { value: 'Sean', label: 'Sean' },
-    { value: 'Toni', label: 'Toni' },
-    // value: '', label: '',
-]
+const playerOptions = [
+  { value: 'Christoph', label: 'Christoph' },
+  { value: 'Danny', label: 'Danny' },
+  { value: 'Edgar', label: 'Edgar' },
+  { value: 'Fadi', label: 'Fadi' },
+  { value: 'Kathy', label: 'Kathy' },
+  { value: 'Nelson', label: 'Nelson' },
+  { value: 'Sean', label: 'Sean' },
+  { value: 'Toni', label: 'Toni' },
+  // value: '', label: '',
+];
 
 const firstServerServePoints = {
   0: true,
@@ -28,7 +28,7 @@ const firstServerServePoints = {
   17: true,
 };
 
-const isWinner = (blueScore, redScore) => {
+const checkForWinner = (blueScore, redScore) => {
   // you have to win by 2 & score has to be >= 11
   if (Math.abs(blueScore - redScore) >= 2
     && (blueScore >= 11
@@ -39,8 +39,8 @@ const isWinner = (blueScore, redScore) => {
 
 const Scoreboard = () => {
 
-  const [blueTeam, setBlueTeam] = useState(0);
-  const [redTeam, setRedTeam] = useState(0);
+  const [blueTeam, setBlueTeam] = useState([]);
+  const [redTeam, setRedTeam] = useState([]);
 
   const [blueScore, setBlueScore] = useState(0);
   const [redScore, setRedScore] = useState(0);
@@ -52,12 +52,13 @@ const Scoreboard = () => {
   // `history` will look like this: ['red', 'red', 'blue',...] based on who got the point
 
   useEffect(() => {
-    // const handleKeypress = 
+    const isWinner = checkForWinner(blueScore, redScore);
+
     const handleKeypress = (e) => {
       // console.log('e', e);
       console.log('history before', history);
     
-      if ((e.key === 'ArrowLeft' || e.key === 'ArrowDown') && !isWinner(blueScore, redScore)) { // blue team point
+      if ((e.key === 'ArrowLeft' || e.key === 'ArrowDown') && !isWinner) { // blue team point
         if (!teamServingFirst) {
           setTeamServingFirst('blue');
           setTeamReceivingFirst('red');
@@ -66,7 +67,7 @@ const Scoreboard = () => {
           setHistory([...history, 'blue']);
           // checkWhoIsServing(blueScore, redScore);
         }
-      } else if ((e.key === 'ArrowRight' || e.key === 'ArrowUp') && !isWinner(blueScore, redScore)) { // red team point
+      } else if ((e.key === 'ArrowRight' || e.key === 'ArrowUp') && !isWinner) { // red team point
         if (!teamServingFirst) {
           setTeamServingFirst('red');
           setTeamReceivingFirst('blue');
@@ -76,6 +77,9 @@ const Scoreboard = () => {
           // checkWhoIsServing(blueScore, redScore);
         }
       } else if (e.key === 'c') {
+
+        // store teams & w's / l's
+
         setBlueScore(0);
         setRedScore(0);
         setHistory([]);
@@ -120,33 +124,64 @@ const Scoreboard = () => {
     }
   }
 
+  const isWinner = checkForWinner(blueScore, redScore);
+
+  let winnerMessage = '';
+  if (isWinner) {
+    if (blueScore > redScore) {
+      if (blueTeam.length === 1) {
+        winnerMessage = `${blueTeam[0].label} wins!`;
+      } else if (blueTeam.length === 2) {
+        winnerMessage = `${blueTeam[0].label} and ${blueTeam[1].label} win!`;
+      } else {
+        winnerMessage = 'Blue team wins!';
+      }
+    } else {
+      if (redTeam.length === 1) {
+        winnerMessage = `${redTeam[0].label} wins!`;
+      } else if (redTeam.length === 2) {
+        winnerMessage = `${redTeam[0].label} and ${redTeam[1].label} win!`;
+      } else {
+        winnerMessage = 'Red team wins!';
+      }
+    }
+  }
+
   return (
-    <div className="scoreboard">
-      <div>
-        <Score
-          isServing={teamServing === 'blue'}
-          score={blueScore}
-          team="blue"
-        />
-        <Select
-          isMulti
-          onChange={(team) => {console.log('team', team); setBlueTeam(team)}}
-          options={players}
-          value={blueTeam}
-        />
+    <div>
+      <div className="winnerMessage">
+        {winnerMessage}
       </div>
-      <div>
-        <Score
-          isServing={teamServing === 'red'}
-          team="red"
-          score={redScore}
-        />
-        <Select
-          isMulti
-          onChange={(team) => {console.log('team', team); setRedTeam(team)}}
-          options={players}
-          value={redTeam}
-        />
+      <div
+        className={`${isWinner ? 'isWinner' : ''} scoreboard`}
+      >
+        <div>
+          <Score
+            isServing={teamServing === 'blue'}
+            score={blueScore}
+            team="blue"
+          />
+          <Select
+            isMulti
+            onChange={(team) => {console.log('team', team); setBlueTeam(team)}}
+            options={playerOptions.filter(player => !redTeam.includes(player))}
+            value={blueTeam}
+          />
+        </div>
+        <div>
+          <Score
+            isServing={teamServing === 'red'}
+            team="red"
+            score={redScore}
+          />
+          <Select
+            isMulti
+            onChange={(team) => {console.log('team', team); setRedTeam(team)}}
+            // options={playerOptions}
+            options={playerOptions.filter(player => !blueTeam.includes(player))}
+            value={redTeam}
+          />
+        </div>
       </div>
     </div>
   );

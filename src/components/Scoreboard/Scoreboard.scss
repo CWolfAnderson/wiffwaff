@@ -1,7 +1,23 @@
+.instructions {
+	bottom: 0;
+	left: 25%;
+	padding: 8px;
+	position: fixed;
+}
+
+.isWinner {
+	background-color: gray;
+}
+
 .scoreboard {
 	align-items: row;
 	display: flex;
 	flex-wrap: nowrap;
 	height: 100%;
 	justify-content: space-around;
+}
+
+.winnerMessage {
+	font-size: 4em;
+	text-align: center;
 }
