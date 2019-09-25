@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import './Scoreboard.scss';
 import Score from '../Score';
+const axios = require('axios');
 
 const playerOptions = [
   { value: 'Christoph', label: 'Christoph' },
   { value: 'Danny', label: 'Danny' },
   { value: 'Edgar', label: 'Edgar' },
   { value: 'Fadi', label: 'Fadi' },
+  { value: 'Gerardo', label: 'Gerardo' },
+  { value: 'Jen', label: 'Jen' },
   { value: 'Kathy', label: 'Kathy' },
   { value: 'Nelson', label: 'Nelson' },
   { value: 'Sean', label: 'Sean' },
@@ -78,7 +81,34 @@ const Scoreboard = () => {
         }
       } else if (e.key === 'c') {
 
-        // store teams & w's / l's
+        if (isWinner) {
+          // store teams & w's / l's
+          if (blueTeam.length === 1 && redTeam.length === 1) {
+            const player1Name = blueTeam[0].label;
+            const player1Score = blueScore;
+            const player2Name = redTeam[0].label;
+            const player2Score = redScore;
+
+            const params = {
+              player1Name,
+              player1Score,
+              player2Name,
+              player2Score,
+            };
+
+            console.log('params', params);
+
+            axios.get('https://us-central1-wiff-waff2.cloudfunctions.net/addOneVOneMatch', {
+              params,
+            })
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          }
+        }
 
         setBlueScore(0);
         setRedScore(0);
@@ -175,6 +205,7 @@ const Scoreboard = () => {
             score={redScore}
           />
           <Select
+            clearValue={[]}
             isMulti
             onChange={(team) => {console.log('team', team); setRedTeam(team)}}
             // options={playerOptions}

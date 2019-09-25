@@ -3,6 +3,7 @@ import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import './Leaderboard.scss';
+const axios = require('axios');
 
 const oneVOneGames = [
   {
@@ -79,13 +80,27 @@ const columnDefs = [
 
 const Leaderboard = () => {
 
+  const [players, setPlayers] = useState([]);
+
+  useEffect(() => {
+    axios.get('https://us-central1-wiff-waff2.cloudfunctions.net/getOneVOneMatches', {
+    })
+    .then((response) => {
+      console.log(response);
+      const players = response.data;
+      setPlayers(players);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  });
+
   return (
     <div>
-      Leaderboard
-      <div className="ag-theme-balham grid">
+      <div className='ag-theme-balham grid'>
         <AgGridReact
           columnDefs={columnDefs}
-          rowData={Object.values(players)}
+          rowData={players}
         />
       </div>
     </div>
